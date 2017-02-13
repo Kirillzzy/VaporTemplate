@@ -1,5 +1,10 @@
 import Vapor
 
+var vkToken: String? = nil
+var twitterToken: String? = nil
+var facebookToken: String? = nil
+
+
 let drop = Droplet()
 
 drop.get { req in
@@ -40,16 +45,32 @@ drop.get("get", "sn"){ request in
     return "Got list of social networks"
 }
 
-drop.post("auth", "vk"){ request in
-    return "authorized vk"
+drop.post("auth", "vk", ":token"){ request in
+//    let id = "5759522"
+//    let secret = "q4MIawN5bZwdcjaER7cs"
+//    let response = try drop.client.get(pathReq)
+//    return response//"authorized vk"
+    guard let token = request.parameters["token"]?.string else {
+        throw Abort.badRequest
+    }
+    vkToken = token
+    return "Success"
 }
 
 drop.post("auth", "twitter"){ request in
-    return "authorized twitter"
+    guard let token = request.parameters["token"]?.string else {
+        throw Abort.badRequest
+    }
+    twitterToken = token
+    return "Success"
 }
 
 drop.post("auth", "facebook"){ request in
-    return "authorized facebook"
+    guard let token = request.parameters["token"]?.string else {
+        throw Abort.badRequest
+    }
+    facebookToken = token
+    return "Success"
 }
 
 drop.resource("posts", PostController())
