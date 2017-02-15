@@ -1,9 +1,9 @@
 import Vapor
 
+
 var vkToken: String? = nil
 var twitterToken: String? = nil
 var facebookToken: String? = nil
-
 
 let drop = Droplet()
 
@@ -14,10 +14,15 @@ drop.get { req in
 }
 
 drop.get("get", "posts", "all"){ request in
+    var posti = VkPost(postId: "1", content: "HELLo", date: "11", url: "abra.com")
+    
     return "Got allPosts"
 }
 
 drop.get("get", "posts", "vk"){ request in
+    let url = "https://api.vk.com/method/newsfeed.get?count=3&access_token=\(vkToken!)&v=5.62"
+    let response = try drop.client.get(url)
+    print(response)
     return "Got vkPosts"
 }
 
@@ -45,11 +50,7 @@ drop.get("get", "sn"){ request in
     return "Got list of social networks"
 }
 
-drop.post("auth", "vk", ":token"){ request in
-//    let id = "5759522"
-//    let secret = "q4MIawN5bZwdcjaER7cs"
-//    let response = try drop.client.get(pathReq)
-//    return response//"authorized vk"
+drop.get("auth", "vk", ":token"){ request in
     guard let token = request.parameters["token"]?.string else {
         throw Abort.badRequest
     }
@@ -57,7 +58,7 @@ drop.post("auth", "vk", ":token"){ request in
     return "Success"
 }
 
-drop.post("auth", "twitter"){ request in
+drop.get("auth", "twitter", ":token"){ request in
     guard let token = request.parameters["token"]?.string else {
         throw Abort.badRequest
     }
@@ -65,7 +66,7 @@ drop.post("auth", "twitter"){ request in
     return "Success"
 }
 
-drop.post("auth", "facebook"){ request in
+drop.get("auth", "facebook", ":token"){ request in
     guard let token = request.parameters["token"]?.string else {
         throw Abort.badRequest
     }
